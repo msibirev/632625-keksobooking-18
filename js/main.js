@@ -138,3 +138,18 @@ var renderPins = function (offers) {
 };
 
 renderPins(mocks);
+
+var renderPopup = function (offer) {
+  var popupInsert = document.querySelector('.map');
+  var popupTemplate = document.querySelector('#card').content.querySelector('.popup');
+
+  var popupElement = popupTemplate.cloneNode(true);
+  var bar = popupElement.querySelector('.popup__title').textContent = offer.title;
+  console.log(bar);
+  popupInsert.appendChild(popupElement);
+  var beforeMapElement = document.querySelector('.map__filters-container');
+  var parentMap = beforeMapElement.parentNode;
+  parentMap.insertBefore(popupElement, beforeMapElement);
+};
+
+renderPopup();
