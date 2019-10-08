@@ -232,7 +232,7 @@ var selectChanger = function () {
     100: ['0']
   };
 
-  var roomSelect = document.querySelector('#room_nubmer');
+  var roomSelect = document.querySelector('#room_number');
   var capacitySelect = document.querySelector('#capacity');
   var guestCapacity = capacitySelect.querySelector('option:checked');
   var roomCapacity = capacityValue[roomSelect.querySelector('option:checked').value];
