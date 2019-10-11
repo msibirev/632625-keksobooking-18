@@ -118,7 +118,7 @@ var mocks = getArrayOffersMock(8);
 
 window.mocks = mocks;
 
-/* var createPin = function (offer) {
+  var createPin = function (offer) {
   var mapPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var childPinTemplate = mapPinTemplate.cloneNode(true);
   childPinTemplate.setAttribute('style', 'left: ' + offer.location.x + 'px' + '; top: ' + offer.location.y + 'px');
@@ -139,9 +139,7 @@ var renderPins = function (offers) {
   mapArea.appendChild(fragment);
 };
 
-renderPins(mocks);
-
-  var createPopup = function (offer) {
+var createPopup = function (offer) {
   var popupInsert = document.querySelector('.map');
   var popupTemplate = document.querySelector('#card').content.querySelector('.popup');
 
@@ -154,8 +152,6 @@ renderPins(mocks);
 
   return popupElement;
 };
-
-createPopup(mocks); */
 
 var adFormHeader = document.querySelector('.ad-form-header');
 adFormHeader.setAttribute('disabled', 'disabled');
@@ -174,6 +170,8 @@ var doActive = function () {
   var adFormFaded = document.querySelector('.ad-form--disabled');
   adFormFaded.classList.remove('ad-form--disabled');
 
+  renderPins(mocks);
+  createPopup(mocks);
 
 };
 
@@ -236,7 +234,7 @@ var selectChanger = function () {
   var capacitySelect = document.querySelector('#capacity');
   var guestCapacity = capacitySelect.querySelector('option:checked');
   var roomCapacity = capacityValue[roomSelect.querySelector('option:checked').value];
-  var errorMessage = roomCapacity.includes(guestCapacity.value) ? '' : 'Колличество комнат не подходит ' + guestCapacity.textContent;
+  var errorMessage = roomCapacity.includes(guestCapacity.value) ? '' : 'Колличество комнат не подходит для этого количества гостей';
   capacitySelect.setCustomValidity(errorMessage);
 };
 
