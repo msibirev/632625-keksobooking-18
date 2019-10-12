@@ -26,6 +26,11 @@ var PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg'
 ];
 
+var ENTER_CODE = 13;
+
+var MAP_PIN_MAIN_WIDTH = 65;
+var MAP_PIN_MAIN_HEIGHT = 65 + 22;
+
 // возвращает url картинки
 var getImgUrl = function (number) {
   if (!number) {
@@ -113,10 +118,7 @@ var mocks = getArrayOffersMock(8);
 
 window.mocks = mocks;
 
-var mapRemove = document.querySelector('.map');
-mapRemove.classList.remove('map--faded');
-
-var createPin = function (offer) {
+  var createPin = function (offer) {
   var mapPinTemplate = document.querySelector('#pin').content.querySelector('.map__pin');
   var childPinTemplate = mapPinTemplate.cloneNode(true);
   childPinTemplate.setAttribute('style', 'left: ' + offer.location.x + 'px' + '; top: ' + offer.location.y + 'px');
@@ -137,4 +139,105 @@ var renderPins = function (offers) {
   mapArea.appendChild(fragment);
 };
 
-renderPins(mocks);
+var createPopup = function (offer) {
+  var popupInsert = document.querySelector('.map');
+  var popupTemplate = document.querySelector('#card').content.querySelector('.popup');
+
+  var popupElement = popupTemplate.cloneNode(true);
+  popupElement.querySelector('.popup__title').textContent = offer.title;
+  popupInsert.appendChild(popupElement);
+  var beforeMapElement = document.querySelector('.map__filters-container');
+  var parentMap = beforeMapElement.parentNode;
+  parentMap.insertBefore(popupElement, beforeMapElement);
+
+  return popupElement;
+};
+
+var adFormHeader = document.querySelector('.ad-form-header');
+adFormHeader.setAttribute('disabled', 'disabled');
+
+
+var adFormElement = document.querySelectorAll('.ad-form__element');
+for (var i = 0; i < adFormElement.length; i++) {
+  adFormElement[i].setAttribute('disabled', 'disabled');
+}
+
+var doActive = function () {
+  adFormHeader.removeAttribute('disabled', 'disabled');
+  for (var i = 0; i < adFormElement.length; i++) {
+    adFormElement[i].removeAttribute('disabled', 'disabled');
+  }
+  var adFormFaded = document.querySelector('.ad-form--disabled');
+  adFormFaded.classList.remove('ad-form--disabled');
+
+  renderPins(mocks);
+  createPopup(mocks);
+
+};
+
+var mapElement = document.querySelector('.map');
+var mapPinMain = document.querySelector('.map__pin--main');
+
+mapPinMain.addEventListener('mousedown', function () {
+  mapElement.classList.remove('map--faded');
+  doActive();
+  setAddress('down');
+});
+
+mapPinMain.addEventListener('keydown', function (evt) {
+  if (evt.keyCode === ENTER_CODE) {
+    mapElement.classList.remove('map--faded');
+    doActive();
+    setAddress('down');
+  }
+});
+
+var getCoordinatsPinMain = function (howCalc) {
+  // style left in number
+  var mapPinMainLeftStyle = mapPinMain.style.left.slice(0, -2) * 1;
+  var mapPinMainTopStyle = mapPinMain.style.top.slice(0, -2) * 1;
+
+  var pinHeight = 0;
+  if (howCalc === 'center') {
+    pinHeight = MAP_PIN_MAIN_HEIGHT / 2;
+  } else if (howCalc === 'down') {
+    pinHeight = MAP_PIN_MAIN_HEIGHT;
+  }
+
+  var x = Math.floor(mapPinMainLeftStyle + MAP_PIN_MAIN_WIDTH / 2);
+  var y = Math.floor(mapPinMainTopStyle + pinHeight);
+
+  return {
+    x: x,
+    y: y
+  };
+};
+
+var setAddress = function (howCalc) {
+  var addressInput = document.querySelector('#address');
+  var centerPin = getCoordinatsPinMain(howCalc);
+  addressInput.value = centerPin.x + ', ' + centerPin.y;
+};
+
+setAddress('center');
+
+
+var selectChanger = function () {
+  var capacityValue = {
+    1: ['1'],
+    2: ['1', '2'],
+    3: ['1', '2', '3'],
+    100: ['0']
+  };
+
+  var roomSelect = document.querySelector('#room_number');
+  var capacitySelect = document.querySelector('#capacity');
+  var guestCapacity = capacitySelect.querySelector('option:checked');
+  var roomCapacity = capacityValue[roomSelect.querySelector('option:checked').value];
+  var errorMessage = roomCapacity.includes(guestCapacity.value) ? '' : 'Колличество комнат не подходит для этого количества гостей';
+  capacitySelect.setCustomValidity(errorMessage);
+};
+
+document.querySelector('#capacity').addEventListener('change', function () {
+  selectChanger();
+});
